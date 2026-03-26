@@ -71,6 +71,14 @@ sudo apktool d -r -f -o ig_plain ig.apk
 sudo chmod +x script.sh
 sudo ./script.sh
 
+# in case of bundled apk, install bundletool and prepare the .apks, change the extend file to .zip, then extract it to build Apk (Universal Mode).
+# install required tool, required nodejs >14 for apk-mitm
+sudo apt install nodejs npm -y
+sudo npm install -g apk-mitm
+
+#cd to the extracted which contains base.apk
+apk-mitm base.apk --no-sideloading --no-res
+
 # recompile the apk
 # for the apktool >= 3.0 run: sudo apktool b -f ig_plain -o ig_patched.apk
 # run this in case it required more heap space (need to provide more RAM to run): sudo java -Xmx4g -jar /usr/local/bin/apktool.jar b -f ig_plain -o ig_patched.apk
@@ -85,6 +93,7 @@ sudo zipalign -v 4 patched.apk install.apk
 sudo keytool -genkeypair -alias key0 -keyalg RSA -keysize 4096 -validity 10000 -keystore patched_instagram_key.jks
 
 # sign the apk with 'foobar' as password
+# for newer version: apksigner sign --v1-signing-enabled true --v2-signing-enabled true --v3-signing-enabled true --ks ./patched_instagram_key.jks install.apk
 sudo echo foobar | apksigner sign --ks ./patched_instagram_key.jks --v1-signing-enabled true --v2-signing-enabled true --v3-signing-enabled false install.apk
 ```
 - now **Uninstall your current instagram**
